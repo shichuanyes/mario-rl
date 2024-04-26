@@ -1,6 +1,27 @@
+import torch
+from torch import nn
+from torchvision import transforms as T
+from PIL import Image
+import numpy as np
+from pathlib import Path
+from collections import deque
+import random, datetime, os
+
+# Gym is an OpenAI toolkit for RL
 import gym
 from gym.spaces import Box
 from gym.wrappers import FrameStack
+
+# NES Emulator for OpenAI Gym
+from nes_py.wrappers import JoypadSpace
+
+# Super Mario environment for OpenAI Gym
+import gym_super_mario_bros
+
+from stable_baselines3 import PPO
+
+from tensordict import TensorDict
+from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
 
 class SkipFrame(gym.Wrapper):
     def __init__(self, env, skip):
@@ -51,12 +72,16 @@ class ResizeObservation(gym.ObservationWrapper):
         self.observation_space = Box(low=0, high=255, shape=obs_shape, dtype=np.uint8)
 
     def observation(self, observation):
-        transforms = T.Compose(
-            [T.Resize(self.shape, antialias=True), T.Normalize(0, 255)]
-        )
-        observation = transforms(observation).squeeze(0)
+        if not isinstance(observation, Image.Image):
+            observation = Image.fromarray(observation)
+
+        # Resize the image
+        transforms = T.Compose([
+            T.Resize(self.shape, interpolation=Image.BILINEAR)
+        ])
+        observation = transforms(observation)
+
+        # Convert PIL image back to NumPy array
+        observation = np.array(observation)
+
         return observation
-    
-    
-## For Tianyu Bro: You can implement more preprocessing methods below:
-## TBC

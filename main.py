@@ -23,6 +23,7 @@ from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
 
 from stable_baselines3 import PPO
+from stable_baselines3 import DQN
 
 from tensordict import TensorDict
 from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
@@ -31,7 +32,6 @@ from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
 if __name__ == '__main__':
     # Get Arguments
     args = parse_args()
-    seed = args.seed
 
     env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='rgb_array', apply_api_compatibility=True)
     # Override `reset` method to get rid of error
@@ -55,6 +55,7 @@ if __name__ == '__main__':
             env = FrameStack(env, num_stack=args.stack_frame_num)
     
     # TODO: Add support for different algorithms
-    model = PPO("CnnPolicy", env)
+    # model = PPO("CnnPolicy", env)
+    model = DQN("CnnPolicy", env)
     model.learn(total_timesteps=args.total_timesteps)
     model.save(args.model_save_path)

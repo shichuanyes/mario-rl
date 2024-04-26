@@ -15,4 +15,8 @@ def parse_args():
     
     parser.add_argument('--gray', type=bool, default=False, help='Whether to do gray scale')
 
-    return args
+    parser.add_argument('--model_save_path', type=str, default=None, help='Path to the file where the RL agent should be saved')
+
+    parser.add_argument('--total_timesteps', type=int, default=25000, help='Total Number of samples (env steps) to train on')
+
+    return parser.parse_args()

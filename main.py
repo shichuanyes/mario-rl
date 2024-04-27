@@ -1,7 +1,9 @@
 from args import parse_args
-
+from agent import *
 from preprocessing import *
-
+from CNN import *
+from stable_baselines3 import DQN
+import sys
 import torch
 from torch import nn
 from torchvision import transforms as T
@@ -22,12 +24,9 @@ from nes_py.wrappers import JoypadSpace
 # Super Mario environment for OpenAI Gym
 import gym_super_mario_bros
 
-from stable_baselines3 import PPO
-from stable_baselines3 import DQN
 
 from tensordict import TensorDict
 from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
-
 
 if __name__ == '__main__':
     # Get Arguments
@@ -53,9 +52,8 @@ if __name__ == '__main__':
             env = FrameStack(env, num_stack=args.stack_frame_num, new_step_api=True)
         else:
             env = FrameStack(env, num_stack=args.stack_frame_num)
-    
-    # TODO: Add support for different algorithms
-    # model = PPO("CnnPolicy", env)
-    model = DQN("CnnPolicy", env)
+    cnn=getattr(sys.modules[__name__], args.cnn)
+   
+    model=targetmodel(args.agent, cnn, env)
     model.learn(total_timesteps=args.total_timesteps)
     model.save(args.model_save_path)

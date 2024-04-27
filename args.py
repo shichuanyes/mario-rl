@@ -3,9 +3,9 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description="Mario Benchmark")
 
-    parser.add_argument('--agent', type=str, default='DQN', choices=['DQN', 'DDQN', 'TRPO', 'PPO', 'DDPG', 'MCTS'], help='RL Agent')
+    parser.add_argument('--agent', type=str, default='DQN', choices=['DQN', 'PPO', 'A2C'], help='RL Agent')
     
-    parser.add_argument('--cnn', type=str, default='AlexNet', choices=['AlexNet', 'ResNet', 'VGG', 'Inception'], help='CNN Type')
+    parser.add_argument('--cnn', type=str, default='CVBaseline', choices=['CVBaseline', 'AlexNet', 'ResNet', 'VGG', 'Inception'], help='CNN Type')
     
     parser.add_argument('--skip_frame_num', type=int, default=0, help='Number of frames skipped')
     
@@ -18,5 +18,5 @@ def parse_args():
     parser.add_argument('--model_save_path', type=str, default=None, help='Path to the file where the RL agent should be saved')
 
     parser.add_argument('--total_timesteps', type=int, default=25000, help='Total Number of samples (env steps) to train on')
-
+    
     return parser.parse_args()

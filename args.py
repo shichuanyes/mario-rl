@@ -5,7 +5,7 @@ def parse_args():
 
     parser.add_argument('--agent', type=str, default='DQN', choices=['DQN', 'PPO', 'A2C'], help='RL Agent')
     
-    parser.add_argument('--cnn', type=str, default='CVBaseline', choices=['CVBaseline', 'AlexNet', 'ResNet', 'VGG', 'Inception'], help='CNN Type')
+    parser.add_argument('--cnn', type=str, default='Baseline', choices=['Baseline', 'AlexNet', 'ResNet', 'VGG', 'Inception'], help='CNN Type')
     
     parser.add_argument('--skip_frame_num', type=int, default=0, help='Number of frames skipped')
     

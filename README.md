@@ -8,6 +8,6 @@ Requirements: `pip install -r requirements.txt`
 
 # Run on command line
 
-```
+```bash
 python main.py --total_timesteps 1 --model_save_path experiment
 ```

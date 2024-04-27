@@ -1,4 +1,4 @@
-pytorch==2.3.0
+torch==2.3.0
 ale-py==0.8.1
 autorom==0.6.1
 autorom-accept-rom-license==0.6.1

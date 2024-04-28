@@ -28,8 +28,10 @@
 
 # Define all possible values for each argument
 AGENTS=('DQN' 'PPO' 'A2C')
-CNNS=('Baseline' 'ResNet' 'VGG' 'Inception')
-TOTAL_TIMESTEPS=(10000 100000 1000000)
+CNNS=('Baseline' 'ResNet' 'VGG')
+# TOTAL_TIMESTEPS=(10000 100000 1000000)
+TOTAL_TIMESTEPS=(1000000)
+
 
 # Loop through all combinations
 for total_timesteps in "${TOTAL_TIMESTEPS[@]}"; do

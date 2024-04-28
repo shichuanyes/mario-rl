@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 .vscode
+model_file.zip

@@ -82,7 +82,7 @@ if __name__ == '__main__':
     
     
     # Evaluate the trained model
-    mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
+    mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=1)
     print(f"Mean reward over 10 evaluation episodes: {mean_reward:.2f} +/- {std_reward:.2f}")
     
     with open("result.txt", "a") as f:

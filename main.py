@@ -27,6 +27,8 @@ import gym_super_mario_bros
 
 from tensordict import TensorDict
 from torchrl.data import TensorDictReplayBuffer, LazyMemmapStorage
+from stable_baselines3.common.evaluation import evaluate_policy
+import time
 
 if __name__ == '__main__':
     # Get Arguments
@@ -53,7 +55,26 @@ if __name__ == '__main__':
         else:
             env = FrameStack(env, num_stack=args.stack_frame_num)
     cnn=getattr(sys.modules[__name__], args.cnn)
-   
+    
     model=targetmodel(args.agent, cnn, env)
+    
+    # Track time
+    start_time = time.time()
+    
+    # Training
+    
     model.learn(total_timesteps=args.total_timesteps)
+    
+    # Calculate training time
+    training_time = time.time() - start_time
+    
+    # Save the trained model
     model.save(args.model_save_path)
+    
+
+    print("Training time:", datetime.timedelta(seconds=training_time))
+    
+    
+    # Evaluate the trained model
+    mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
+    print(f"Mean reward over 10 evaluation episodes: {mean_reward:.2f} +/- {std_reward:.2f}")

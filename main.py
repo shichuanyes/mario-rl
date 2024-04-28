@@ -31,6 +31,12 @@ from stable_baselines3.common.evaluation import evaluate_policy
 import time
 
 if __name__ == '__main__':
+    
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    
+    
     # Get Arguments
     args = parse_args()
 
@@ -56,7 +62,7 @@ if __name__ == '__main__':
             env = FrameStack(env, num_stack=args.stack_frame_num)
     cnn=getattr(sys.modules[__name__], args.cnn)
     
-    model=targetmodel(args.agent, cnn, env)
+    model = targetmodel(args.agent, cnn, env).to(device)
     
     # Track time
     start_time = time.time()

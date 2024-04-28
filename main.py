@@ -32,11 +32,6 @@ import time
 
 if __name__ == '__main__':
     
-    
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    
-    
     # Get Arguments
     args = parse_args()
 
@@ -55,11 +50,11 @@ if __name__ == '__main__':
     if args.resize > 0:
         env = ResizeObservation(env, shape=args.resize)
 
-    if args.stack_frame_num > 0:
-        if gym.__version__ < '0.26':
-            env = FrameStack(env, num_stack=args.stack_frame_num, new_step_api=True)
-        else:
-            env = FrameStack(env, num_stack=args.stack_frame_num)
+    # if args.stack_frame_num > 0:
+    #     if gym.__version__ < '0.26':
+    #         env = FrameStack(env, num_stack=args.stack_frame_num, new_step_api=True)
+    #     else:
+    #         env = FrameStack(env, num_stack=args.stack_frame_num)
     cnn=getattr(sys.modules[__name__], args.cnn)
     
     model = targetmodel(args.agent, cnn, env)
@@ -86,6 +81,7 @@ if __name__ == '__main__':
     print(f"Mean reward over 10 evaluation episodes: {mean_reward:.2f} +/- {std_reward:.2f}")
     
     with open("result.txt", "a") as f:
-        f.write(f"{args.agent}, {args.cnn}, {args.skip_frame_num}, {args.stack_frame_num}, {args.resize}, {args.gray}, {args.total_timesteps}, {training_time}, {mean_reward}, {std_reward}\n")
-    
+        # f.write(f"{args.agent}, {args.cnn}, {args.skip_frame_num}, {args.stack_frame_num}, {args.resize}, {args.gray}, {args.total_timesteps}, {training_time}, {mean_reward}, {std_reward}\n")
+        f.write(f"{args.agent}, {args.cnn}, {args.total_timesteps}, {training_time}, {mean_reward}, {std_reward}\n")
+
     

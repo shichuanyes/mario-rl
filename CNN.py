@@ -21,7 +21,7 @@ class Baseline(BaseFeaturesExtractor):
         This corresponds to the number of unit for the last layer.
     """
 
-    def __init__(self, observation_space: spaces.Box, features_dim: int = 256):
+    def __init__(self, observation_space: spaces.Box, features_dim: int = 256, device=th.device("cuda" if th.cuda.is_available() else "cpu")):
         super().__init__(observation_space, features_dim)
         # We assume CxHxW images (channels first)
         # Re-ordering will be done by pre-preprocessing or wrapper
@@ -34,17 +34,21 @@ class Baseline(BaseFeaturesExtractor):
             nn.ReLU(),
             nn.Flatten(),
         )
+        self.device = device
+        self.to(device)
 
         # Compute shape by doing one forward pass
         with th.no_grad():
             n_flatten = self.cnn(
-                th.as_tensor(observation_space.sample()[None]).float()
+                th.as_tensor(observation_space.sample()[None]).float().to(self.device)
             ).shape[1]
 
         self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.ReLU())
 
     def forward(self, observations: th.Tensor) -> th.Tensor:
-        return self.linear(self.cnn(observations))
+        observations = observations.to(self.device)
+        cnn_output = self.cnn(observations)
+        return self.linear(cnn_output)
     
     
     
@@ -112,17 +116,19 @@ class ResNet(BaseFeaturesExtractor):
         This corresponds to the number of unit for the last layer.
     """
 
-    def __init__(self, observation_space: spaces.Box, features_dim: int = 256):
+    def __init__(self, observation_space: spaces.Box, features_dim: int = 256, device=th.device("cuda" if th.cuda.is_available() else "cpu")):
         super().__init__(observation_space, features_dim)
         
+        self.device = device
+
         n_input_channels = observation_space.shape[0]
         
         # Load a pre-defined ResNet and modify it for our use case
         base_model = resnet18(pretrained=False)  # Use pretrained=True for pretrained weights
         base_model.conv1 = nn.Conv2d(n_input_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
         base_model.fc = nn.Linear(base_model.fc.in_features, features_dim)
-
         self.resnet = base_model
+        self.resnet.to(self.device)
     
     def forward(self, observations: th.Tensor) -> th.Tensor:
         """
@@ -131,6 +137,7 @@ class ResNet(BaseFeaturesExtractor):
         :param observations: (th.Tensor) The observations from the environment.
         :return: (th.Tensor) The extracted features.
         """
+        observations.to(self.device)
         return self.resnet(observations)
 
 
@@ -142,9 +149,10 @@ class VGG(BaseFeaturesExtractor):
     :param features_dim: (int) Number of features extracted.
     """
     
-    def __init__(self, observation_space: spaces.Box, features_dim: int = 256):
+    def __init__(self, observation_space: spaces.Box, features_dim: int = 256, device=th.device("cuda" if th.cuda.is_available() else "cpu")):
         super().__init__(observation_space, features_dim)
-        
+        self.device = device
+
         n_input_channels = observation_space.shape[0]
         # Load a pre-defined VGG16 model and modify it for our use case
         base_model = vgg16(pretrained=False)  # Use pretrained=True for pretrained weights
@@ -152,6 +160,7 @@ class VGG(BaseFeaturesExtractor):
         base_model.classifier[6] = nn.Linear(4096, features_dim)
 
         self.vgg = base_model
+        self.vgg.to(self.device)
     
     def forward(self, observations: th.Tensor) -> th.Tensor:
         """
@@ -160,6 +169,7 @@ class VGG(BaseFeaturesExtractor):
         :param observations: (th.Tensor) The observations from the environment.
         :return: (th.Tensor) The extracted features.
         """
+        observations.to(self.device)
         return self.vgg(observations)
     
 
@@ -171,9 +181,11 @@ class Inception(BaseFeaturesExtractor):
     :param features_dim: (int) Number of features extracted.
     """
     
-    def __init__(self, observation_space: spaces.Box, features_dim: int = 256):
+    def __init__(self, observation_space: spaces.Box, features_dim: int = 256, device=th.device("cuda" if th.cuda.is_available() else "cpu")):
         super().__init__(observation_space, features_dim)
-        
+
+        self.device = device
+
         n_input_channels = observation_space.shape[0]
         # Load a pre-defined Inception v3 model and modify it for our use case
         base_model = inception_v3(pretrained=False, aux_logits=False)
@@ -183,6 +195,8 @@ class Inception(BaseFeaturesExtractor):
         base_model.fc = nn.Linear(2048, features_dim)
 
         self.inception = base_model
+        self.inception.to(self.device)
+        
     
     def forward(self, observations: th.Tensor) -> th.Tensor:
         """
@@ -191,4 +205,5 @@ class Inception(BaseFeaturesExtractor):
         :param observations: (th.Tensor) The observations from the environment.
         :return: (th.Tensor) The extracted features.
         """
+        observations.to(self.device)
         return self.inception(observations)

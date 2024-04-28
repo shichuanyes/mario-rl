@@ -7,15 +7,15 @@ def parse_args():
     
     parser.add_argument('--cnn', type=str, default='Baseline', choices=['Baseline', 'AlexNet', 'ResNet', 'VGG', 'Inception'], help='CNN Type')
     
-    parser.add_argument('--skip_frame_num', type=int, default=0, help='Number of frames skipped')
+    parser.add_argument('--skip_frame_num', type=int, default=4, help='Number of frames skipped')
     
-    parser.add_argument('--stack_frame_num', type=int, default=0, help='Number of frames stacked')
+    # parser.add_argument('--stack_frame_num', type=int, default=0, help='Number of frames stacked')
     
     parser.add_argument('--resize', type=int, default=84, help='New size of picture')
     
-    parser.add_argument('--gray', type=bool, default=False, help='Whether to do gray scale')
+    parser.add_argument('--gray', type=bool, default=True, help='Whether to do gray scale')
 
-    parser.add_argument('--model_save_path', type=str, default=None, help='Path to the file where the RL agent should be saved')
+    parser.add_argument('--model_save_path', type=str, default='./model_save', help='Path to the file where the RL agent should be saved')
 
     parser.add_argument('--total_timesteps', type=int, default=25000, help='Total Number of samples (env steps) to train on')
     

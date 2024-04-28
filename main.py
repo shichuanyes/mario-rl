@@ -43,13 +43,13 @@ if __name__ == '__main__':
     if args.skip_frame_num > 0:
         env = SkipFrame(env, skip=args.skip_frame_num)
         
-    elif args.gray is True:
+    if args.gray == 'True':
         env = GrayScaleObservation(env)
         
-    elif args.resize > 0:
+    if args.resize > 0:
         env = ResizeObservation(env, shape=args.resize)
 
-    elif args.stack_frame_num > 0:
+    if args.stack_frame_num > 0:
         if gym.__version__ < '0.26':
             env = FrameStack(env, num_stack=args.stack_frame_num, new_step_api=True)
         else:
@@ -78,3 +78,8 @@ if __name__ == '__main__':
     # Evaluate the trained model
     mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
     print(f"Mean reward over 10 evaluation episodes: {mean_reward:.2f} +/- {std_reward:.2f}")
+    
+    with open("result.txt", "a") as f:
+        f.write(f"{args.agent}, {args.cnn}, {args.skip_frame_num}, {args.stack_frame_num}, {args.resize}, {args.gray}, {args.total_timesteps}, {training_time}, {mean_reward}, {std_reward}\n")
+    
+    

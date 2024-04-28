@@ -62,7 +62,7 @@ if __name__ == '__main__':
             env = FrameStack(env, num_stack=args.stack_frame_num)
     cnn=getattr(sys.modules[__name__], args.cnn)
     
-    model = targetmodel(args.agent, cnn, env).to(device)
+    model = targetmodel(args.agent, cnn, env)
     
     # Track time
     start_time = time.time()

@@ -34,10 +34,13 @@ from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 
+import cv2
+
 
 args = parse_args()
 
-MODEL_DIR = './model/' + args.agent + args.cnn
+MODEL_DIR = './model/' + args.agent + '_' + args.cnn + '.zip'
+print(MODEL_DIR)
 
 
 env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='rgb_array', apply_api_compatibility=True)
@@ -62,18 +65,51 @@ elif args.agent == 'PPO':
 elif args.agent == 'A2C':
     model = A2C.load(MODEL_DIR, env = env)
 
-episode = 1
+# evaluate_policy(model, env, n_eval_episodes=1, deterministic=True, render=False, return_episode_rewards=False)
 
-for episode in range(1, episode+1):
-    states = env_wrap.reset()
-    done = False
-    score = 0
+# episode = 1
+
+# for episode in range(1, episode+1):
+#     states = env.reset()
+#     done = False
+#     score = 0
     
-    while not done:
-        env_wrap.render()
-        action, _ = model.predict(states, deterministic=True)
-        states, reward, done, info = env_wrap.step(action)
-        score += reward
-        time.sleep(0.01)
-    print('Episode:{} Score:{}'.format(episode, score))
-#env.close()
+#     while not done:
+#         env.render()
+#         action, _ = model.predict(states, deterministic=True)
+#         states, reward, done, info = env.step(action)
+#         score += reward
+#         time.sleep(0.01)
+#     print('Episode:{} Score:{}'.format(episode, score))
+# #env.close()
+
+env = model.get_env()
+state = env.reset()
+frames = [state]
+
+score = 0
+for step in range(5000):
+    action, _ = model.predict(state)
+    state, reward, done, info = env.step(action)
+    score += reward
+    frames.append(state)
+    if done:
+        break
+print('Score:{}'.format(score))
+env.close()
+
+frames = np.concatenate(frames)
+frames = np.swapaxes(frames, 1, 3)
+frames = np.swapaxes(frames, 1, 2)
+
+def create_video(frames, output_video_path, fps=30):
+    height, width, _ = frames[0].shape
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
+    for frame in frames:
+        out.write(frame)
+
+    out.release()
+
+create_video(frames, 'out.mp4')

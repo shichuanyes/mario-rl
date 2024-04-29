@@ -112,4 +112,4 @@ def create_video(frames, output_video_path, fps=30):
 
     out.release()
 
-create_video(frames, 'out.mp4')
+create_video(frames, 'out_'+ args.agent + '_' + args.cnn + '.mp4')

@@ -100,7 +100,6 @@ We use these methods to perform a **qualitative** and **quantitative** analysis 
 
 ![image](./plots/summary.jpg)
 
-
 ![image](./plots/cnn_summary.png)
 
 # Example demo videos
@@ -113,13 +112,27 @@ Here we compared the performance of DQN, PPO, A2C with ResNet as an example, we 
 
 **PPO**
 
- ![Description of what the GIF shows](https://file+.vscode-resource.vscode-cdn.net/d%3A/BaiduSyncdisk/NYU/3001%20RL/mario-rl/video/out_PPO_ResNet.gif "DQN &amp; ResNet")
+![Description of what the GIF shows](./video/out_PPO_ResNet.gif "DQN &amp; ResNet")
 
 **A2C**
 
- ![Description of what the GIF shows](https://file+.vscode-resource.vscode-cdn.net/d%3A/BaiduSyncdisk/NYU/3001%20RL/mario-rl/video/out_A2C_ResNet.gif "DQN &amp; ResNet")
+![Description of what the GIF shows](./video/out_A2C_ResNet.gif "DQN &amp; ResNet")
 
 # Conclusion
+
+In the graphs, we can notice that A2C is soon dropped and stabilized. It might because the agent and cnn policy is not properly set and the model is soon trapped into a local optima. For DQN, we can see there is a high variance and the rewards fluctuate around 1200. For PPO, there is a lower variance and the rewards are around 1800.
+
+DQN uses replay buffer to randomly sample the past experiences. This randomness can cause a high variance in the learning stage (as shown in the plot of baseline comparison between agents), given the experience varies from very good to very bad.
+
+DQN also adopts the ϵ-greedy in exploration. We can see in all three plots (fixing the CNNs while varying agents), DQN exhibits much higher reward drop compared to PPO, which can potentially be due to the exploitation possibility is higher (i.e. ϵ is set larger) in an early stage.
+
+PPO generally has the highest episode mean reward in the learning process, which is likely because PPO benefits from the direct search for the optimal policy. This ensures PPO to maximize the reward function.
+
+PPO also has regularization of the policy function. This can cause PPO to perform stable learning, thus having a lower variance.
+
+We can conclude that PPO have higher rewards than DQN initially is because it is focus on the true objectives of RL. 
+
+Due to limitations, we can only conclude that the simple CNN is trained faster than the Resnet and VGG, because it is built simpler. We can also observe from the graph that PPO is faster than DQN. 
 
 # Limitation
 
